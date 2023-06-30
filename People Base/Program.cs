@@ -42,13 +42,19 @@ namespace People_Base
 
             People peopleInfo = dataBase.Get(peopleShowInput);
             Console.WriteLine("FullName: {0}\nGender: {1}\nBirthday: {2}\nAge: {3}", peopleInfo.FullName, peopleInfo.Gender, peopleInfo.BirthDay, peopleInfo.Age);
-            Console.WriteLine("Car model: {0} {1}\nColor: {2}", peopleInfo.Car.Brand, peopleInfo.Car.Model, peopleInfo.Car.Color);
+
+            int carCount = 1;
+            foreach (var carInfo in peopleInfo.Cars)
+            {
+                Console.WriteLine("Car number {0}:\nmodel: {1} {2}\ncolor: {3}", carCount, carInfo.Brand, carInfo.Model, carInfo.Color);
+                Console.WriteLine();
+                carCount++;
+            }
         }
 
         static void AddNewPeople(DataAccess dataBase)
         {
             People peopleInfo = new People();
-            Car carInfo = new Car();
             Console.Write("Enter full name: ");
             peopleInfo.FullName = Console.ReadLine();
             Console.Write("Enter gender: ");
@@ -58,13 +64,20 @@ namespace People_Base
             string[] dataTime = birthDay.ToString().Split('.');
             peopleInfo.BirthDay = new DateTime(Convert.ToInt32(dataTime[2]), Convert.ToInt32(dataTime[1]), Convert.ToInt32(dataTime[0]));
 
-            Console.Write("Enter brand of your car: ");
-            carInfo.Brand = Console.ReadLine();
-            Console.Write("Enter model this car: ");
-            carInfo.Model = Console.ReadLine();
-            Console.Write("Enter color this car: ");
-            carInfo.Color = Console.ReadLine();
-            peopleInfo.Car = carInfo;
+            peopleInfo.Cars = new List<Car>();
+            Console.Write("Enter number of cars: ");
+            int carCount = Convert.ToInt32(Console.ReadLine());
+            for (int i = 0; i < carCount; i++)
+            {
+                Car carInfo = new Car();
+                Console.Write("Enter brand of your car: ");
+                carInfo.Brand = Console.ReadLine();
+                Console.Write("Enter model this car: ");
+                carInfo.Model = Console.ReadLine();
+                Console.Write("Enter color this car: ");
+                carInfo.Color = Console.ReadLine();
+                peopleInfo.Cars.Add(carInfo);
+            }
             dataBase.Add(peopleInfo);
         }
     }

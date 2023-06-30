@@ -51,10 +51,15 @@ namespace People_Base
                     string[] dataTime = reader["BirthDay"].ToString().Split('.');
                     PeopleInfo.BirthDay = new DateTime(Convert.ToInt32(dataTime[2]), Convert.ToInt32(dataTime[1]), Convert.ToInt32(dataTime[0]));
 
-                    PeopleInfo.Car = new Car();
-                    PeopleInfo.Car.Brand = (string)reader["Brand"];
-                    PeopleInfo.Car.Model = (string)reader["Model"];
-                    PeopleInfo.Car.Color = (string)reader["Color"];
+                    PeopleInfo.Cars = new List<Car>();
+                    while (reader.Read())
+                    {
+                        Car car = new Car();
+                        car.Brand = (string)reader["Brand"];
+                        car.Model = (string)reader["Model"];
+                        car.Color = (string)reader["Color"];
+                        PeopleInfo.Cars.Add(car);
+                    }
                 }
             }
             return PeopleInfo;
@@ -66,9 +71,12 @@ namespace People_Base
             SqlCommand commandPeople = new SqlCommand(sqlExpressionPeople, connection);
             commandPeople.ExecuteNonQuery();
 
-            string sqlExpressionCar = $"INSERT INTO Car VALUES ('{people.FullName}', '{people.Car.Brand}', '{people.Car.Model}', '{people.Car.Color}')";
-            SqlCommand commandCar = new SqlCommand(sqlExpressionCar, connection);
-            commandCar.ExecuteNonQuery();
+            foreach (var car in people.Cars)
+            {
+                string sqlExpressionCar = $"INSERT INTO Car VALUES ('{people.FullName}', '{car.Brand}', '{car.Model}', '{car.Color}')";
+                SqlCommand commandCar = new SqlCommand(sqlExpressionCar, connection);
+                commandCar.ExecuteNonQuery();
+            }
         }
 
         ~DataAccess()
